@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/go-spatial/proj.svg?branch=master)](https://travis-ci.org/go-spatial/proj)
-[![Report Card](https://goreportcard.com/badge/github.com/go-spatial/proj)](https://goreportcard.com/report/github.com/go-spatial/proj)
-[![Coverage Status](https://coveralls.io/repos/github/go-spatial/proj/badge.svg?branch=master)](https://coveralls.io/github/go-spatial/proj?branch=master)
-[![Godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/go-spatial/proj)
-[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://github.com/go-spatial/proj/blob/master/LICENSE.md)
+[![Build Status](https://travis-ci.org/oahumap/proj.svg?branch=master)](https://travis-ci.org/oahumap/proj)
+[![Report Card](https://goreportcard.com/badge/github.com/oahumap/proj)](https://goreportcard.com/report/github.com/oahumap/proj)
+[![Coverage Status](https://coveralls.io/repos/github/oahumap/proj/badge.svg?branch=master)](https://coveralls.io/github/oahumap/proj?branch=master)
+[![Godoc](http://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/oahumap/proj)
+[![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://github.com/oahumap/proj/blob/master/LICENSE.md)
 
 
 # proj: PROJ4, for Go!
@@ -17,11 +17,11 @@ We do not intend to port all of PROJ.4: there is stuff in PROJ.4 that we'll prob
 
 To install the packages, preparatory to using them in your own code:
 
-> go get -U github.com/go-spatial/proj
+> go get -U github.com/oahumap/proj
 
 To copy the repo, preparatory to doing development:
 
-> git clone https://github.com/go-spatial/proj
+> git clone https://github.com/oahumap/proj
 > go test ./...
 
 See below for API usage instructions.

@@ -10,7 +10,7 @@ package operations
 import (
 	"math"
 
-	"github.com/go-spatial/proj/core"
+	"github.com/oahumap/proj/core"
 )
 
 func init() {

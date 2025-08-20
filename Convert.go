@@ -11,11 +11,11 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/go-spatial/proj/core"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/core"
+	"github.com/oahumap/proj/support"
 
 	// need to pull in the operations table entries
-	_ "github.com/go-spatial/proj/operations"
+	_ "github.com/oahumap/proj/operations"
 )
 
 // EPSGCode is the enum type for coordinate systems

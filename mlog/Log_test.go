@@ -15,7 +15,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/go-spatial/proj/mlog"
+	"github.com/oahumap/proj/mlog"
 )
 
 func TestLogger(t *testing.T) {

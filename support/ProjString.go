@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-spatial/proj/merror"
+	"github.com/oahumap/proj/merror"
 )
 
 // Pair is a simple key-value pair

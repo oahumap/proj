@@ -1,6 +1,6 @@
 language: go
-# Does nothing when building on go-spatial/proj, but makes builds work cleanly on forks.
-go_import_path: github.com/go-spatial/proj
+# Does nothing when building on oahumap/proj, but makes builds work cleanly on forks.
+go_import_path: github.com/oahumap/proj
 
 git:
   depth: 3

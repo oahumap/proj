@@ -13,9 +13,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-spatial/proj/core"
-	"github.com/go-spatial/proj/mlog"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/core"
+	"github.com/oahumap/proj/mlog"
+	"github.com/oahumap/proj/support"
 )
 
 // the 4 input (or output) values, although

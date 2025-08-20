@@ -12,7 +12,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/go-spatial/proj/gie"
+	"github.com/oahumap/proj/gie"
 	"github.com/stretchr/testify/assert"
 )
 

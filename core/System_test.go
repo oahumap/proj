@@ -10,8 +10,8 @@ package core_test
 import (
 	"testing"
 
-	"github.com/go-spatial/proj/core"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/core"
+	"github.com/oahumap/proj/support"
 	"github.com/stretchr/testify/assert"
 )
 

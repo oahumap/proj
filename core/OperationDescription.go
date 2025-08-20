@@ -10,7 +10,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/go-spatial/proj/merror"
+	"github.com/oahumap/proj/merror"
 )
 
 // OperationDescriptionTable is the global list of all the known operations

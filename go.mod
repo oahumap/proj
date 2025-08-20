@@ -1,4 +1,4 @@
-module github.com/go-spatial/proj
+module github.com/oahumap/proj
 
 go 1.23.4
 

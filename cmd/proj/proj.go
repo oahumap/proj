@@ -14,12 +14,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/go-spatial/proj"
+	"github.com/oahumap/proj"
 
-	"github.com/go-spatial/proj/core"
-	"github.com/go-spatial/proj/merror"
-	"github.com/go-spatial/proj/mlog"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/core"
+	"github.com/oahumap/proj/merror"
+	"github.com/oahumap/proj/mlog"
+	"github.com/oahumap/proj/support"
 )
 
 func main() {

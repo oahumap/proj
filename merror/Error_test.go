@@ -10,7 +10,7 @@ package merror_test
 import (
 	"testing"
 
-	"github.com/go-spatial/proj/merror"
+	"github.com/oahumap/proj/merror"
 	"github.com/stretchr/testify/assert"
 )
 

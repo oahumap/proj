@@ -10,9 +10,9 @@ package operations
 import (
 	"math"
 
-	"github.com/go-spatial/proj/core"
-	"github.com/go-spatial/proj/merror"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/core"
+	"github.com/oahumap/proj/merror"
+	"github.com/oahumap/proj/support"
 )
 
 func init() {

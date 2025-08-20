@@ -11,9 +11,9 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/go-spatial/proj/merror"
+	"github.com/oahumap/proj/merror"
 
-	"github.com/go-spatial/proj/mlog"
+	"github.com/oahumap/proj/mlog"
 )
 
 // DMSToDD converts a degrees-minutes-seconds string to decimal-degrees

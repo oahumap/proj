@@ -67,7 +67,7 @@ generate_cover_data() {
         # so that we can get coverage data across package boundaries.
         mypkgs=$pkg
         for i in `go list -f '{{.Deps}}' $pkg` ; do
-            if [[ "$i" = "github.com/go-spatial/proj"* ]]; then
+            if [[ "$i" = "github.com/oahumap/proj"* ]]; then
                 mypkgs="$mypkgs,$i"
             fi
         done

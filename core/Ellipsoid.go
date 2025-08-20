@@ -11,8 +11,8 @@ import (
 	"encoding/json"
 	"math"
 
-	"github.com/go-spatial/proj/merror"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/merror"
+	"github.com/oahumap/proj/support"
 )
 
 // Ellipsoid represents an ellipsoid

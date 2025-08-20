@@ -10,7 +10,7 @@ package support_test
 import (
 	"testing"
 
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/support"
 
 	"github.com/stretchr/testify/assert"
 )

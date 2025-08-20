@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	// need to pull in the operations table entries
-	_ "github.com/go-spatial/proj/operations"
+	_ "github.com/oahumap/proj/operations"
 )
 
 // These are the projections we know about. If the projection string has a

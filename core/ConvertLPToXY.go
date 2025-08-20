@@ -10,8 +10,8 @@ package core
 import (
 	"math"
 
-	"github.com/go-spatial/proj/merror"
-	"github.com/go-spatial/proj/support"
+	"github.com/oahumap/proj/merror"
+	"github.com/oahumap/proj/support"
 )
 
 // IConvertLPToXY is for 2D LP->XY conversions

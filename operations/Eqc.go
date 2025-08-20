@@ -3,8 +3,8 @@ package operations
 import (
 	"math"
 
-	"github.com/go-spatial/proj/core"
-	"github.com/go-spatial/proj/merror"
+	"github.com/oahumap/proj/core"
+	"github.com/oahumap/proj/merror"
 )
 
 func init() {

@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/go-spatial/proj"
+	"github.com/oahumap/proj"
 	"github.com/stretchr/testify/assert"
 )
 

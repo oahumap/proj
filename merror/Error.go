@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/go-spatial/proj/mlog"
+	"github.com/oahumap/proj/mlog"
 )
 
 // ShowSource determines whther to include source file and line information in

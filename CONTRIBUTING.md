@@ -2,26 +2,26 @@
 
 Thank you for even thinking about contributing! We are excited to have you. This document is intended as a guide to help your through the contribution process. This guide assumes a you have a basic understanding of Git and Go.
 
-For sensitive security-related issue please start a conversation with a core contributor on the [#go-spatial](https://invite.slack.golangbridge.org/) channel in the [gophers slack](https://invite.slack.golangbridge.org/) organization.
+For sensitive security-related issue please start a conversation with a core contributor on the [#oahumap](https://invite.slack.golangbridge.org/) channel in the [gophers slack](https://invite.slack.golangbridge.org/) organization.
 
 This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
-By participating, you are expected to uphold this code. Please report unacceptable behavior to the [#go-spatial](https://invite.slack.golangbridge.org/) channel in the [gophers slack](https://invite.slack.golangbridge.org/) organization or to one of the Core Contributors.
+By participating, you are expected to uphold this code. Please report unacceptable behavior to the [#oahumap](https://invite.slack.golangbridge.org/) channel in the [gophers slack](https://invite.slack.golangbridge.org/) organization or to one of the Core Contributors.
 
 ## There are several places where you can contribute. 
 
 ### Found a bug or something doesn’t feel right?
 
-Everything we do is done through [issues](https://github.com/go-spatial/proj/issues)(https://github.com/go-spatial/proj/issues). The first thing to do is to search the current issues to see if it is something that has been reported or requested already. If you are unable to find an issue that is similar or are unsure just file a new issue. If you find one that is similar, you can add a comment to add additional details, or if you have nothing new to add you can “+1” the issue.
+Everything we do is done through [issues](https://github.com/oahumap/proj/issues)(https://github.com/oahumap/proj/issues). The first thing to do is to search the current issues to see if it is something that has been reported or requested already. If you are unable to find an issue that is similar or are unsure just file a new issue. If you find one that is similar, you can add a comment to add additional details, or if you have nothing new to add you can “+1” the issue.
 
 * If you are unable to find an issue that is similar or are unsure go ahead and file a new one. 
-* If it is a bug,  your can use the following [template](https://github.com/go-spatial/proj/issues/new?template=bug.md). 
+* If it is a bug,  your can use the following [template](https://github.com/oahumap/proj/issues/new?template=bug.md). 
 * If this is a rendering bug, please include the relevant data set and configuration file. 
-* If it is a feature request use the following [template](https://github.com/go-spatial/proj/issues/new?template=feature.md).
+* If it is a feature request use the following [template](https://github.com/oahumap/proj/issues/new?template=feature.md).
 * If this is a feature request, please include a description of what the feature is, and the use case for the feature.
 
 Once you have filed an issue, we will discuss it in the issue. If we need more information or you have further questions about that issue, this is the place to ask. This is the place where we will discuss the design of the fix or feature. Any pull request that adds a feature or fixes an issue should reference the issue number.
 
-Don’t be afraid to reach out if you have any questions.  You can reach us on the gophers Slack on the channel #proj or #go-spatial. You can get an invite into the gophers Slack via (https://invite.slack.golangbridge.org/)
+Don’t be afraid to reach out if you have any questions.  You can reach us on the gophers Slack on the channel #proj or #oahumap. You can get an invite into the gophers Slack via (https://invite.slack.golangbridge.org/)
 
 ## Making a Contribution to the code base.
 
@@ -41,7 +41,7 @@ Want to contribute but not sure where? Not a problem, the best thing to do is lo
 
 ## How to build from source
 
-Clone the `go-spatial/proj` repo to your `GOPATH`. The simplest way to do this is to use `go get -u github.com/go-spatial/proj`, navigate to the repository root then: 
+Clone the `oahumap/proj` repo to your `GOPATH`. The simplest way to do this is to use `go get -u github.com/oahumap/proj`, navigate to the repository root then: 
 
 * Checkout the current release candidate branch, (i.e. v0.7.0)
 	

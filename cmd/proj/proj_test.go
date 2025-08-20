@@ -14,7 +14,7 @@ import (
 	"strings"
 	"testing"
 
-	main "github.com/go-spatial/proj/cmd/proj"
+	main "github.com/oahumap/proj/cmd/proj"
 	"github.com/stretchr/testify/assert"
 )
 
