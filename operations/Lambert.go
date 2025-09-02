@@ -98,7 +98,7 @@ func (op *LCC) Inverse(xy *core.CoordXY) (*core.CoordLP, error) {
 func (op *LCC) lccSetup(system *core.System) error {
 	phi0, ok0 := system.ProjString.GetAsFloat("lat_0")
 	if !ok0 {
-		return merror.New(merror.InvalidArg)
+		phi0 = 0.0
 	}
 	phi1, ok1 := system.ProjString.GetAsFloat("lat_1")
 	if !ok1 {
@@ -110,7 +110,7 @@ func (op *LCC) lccSetup(system *core.System) error {
 	}
 	lambda0, ok3 := system.ProjString.GetAsFloat("lon_0")
 	if !ok3 {
-		return merror.New(merror.InvalidArg)
+		lambda0 = 0.0
 	}
 	x0, ok4 := system.ProjString.GetAsFloat("x_0")
 	if !ok4 {
