@@ -11,7 +11,6 @@ import (
 	"math"
 
 	"github.com/oahumap/proj/core"
-	"github.com/oahumap/proj/merror"
 	"github.com/oahumap/proj/support"
 )
 
@@ -102,7 +101,7 @@ func (op *LCC) lccSetup(system *core.System) error {
 	}
 	phi1, ok1 := system.ProjString.GetAsFloat("lat_1")
 	if !ok1 {
-		return merror.New(merror.InvalidArg)
+		phi1 = 0.0
 	}
 	phi2, ok2 := system.ProjString.GetAsFloat("lat_2")
 	if !ok2 {
