@@ -9,7 +9,8 @@ package proj
 
 import (
 	"fmt"
-	"sync"
+	"io"
+	"net/http"
 
 	"github.com/oahumap/proj/core"
 	"github.com/oahumap/proj/support"
@@ -42,11 +43,16 @@ const (
 //
 // The returned output is a similar array of x/y points, e.g. [x0, y0, x1,
 // y1, x2, y2, ...].
-func Convert(dest EPSGCode, input []float64) ([]float64, error) {
+// If the proj4 string represents WGS84 or a geographic coordinate system,
+// returns the input coordinates unchanged.
+func Convert(proj4 string, input []float64) ([]float64, error) {
+	if isGeographicSystem(proj4) {
+		result := make([]float64, len(input))
+		copy(result, input)
+		return result, nil
+	}
 
-	cacheLock.Lock()
-	conv, err := newConversion(dest)
-	cacheLock.Unlock()
+	conv, err := newConversion(proj4)
 	if err != nil {
 		return nil, err
 	}
@@ -63,10 +69,8 @@ func Convert(dest EPSGCode, input []float64) ([]float64, error) {
 //
 // The returned output is a similar array of lon/lat points, e.g. [lon0, lat0, lon1,
 // lat1, lon2, lat2, ...].
-func Inverse(src EPSGCode, input []float64) ([]float64, error) {
-	cacheLock.Lock()
-	conv, err := newConversion(src)
-	cacheLock.Unlock()
+func Inverse(proj4 string, input []float64) ([]float64, error) {
+	conv, err := newConversion(proj4)
 	if err != nil {
 		return nil, err
 	}
@@ -74,79 +78,56 @@ func Inverse(src EPSGCode, input []float64) ([]float64, error) {
 	return conv.inverse(input)
 }
 
-// CustomProjection provides write-only access to the internal projection list
-// so that projections may be added without having to modify the library code.
-func CustomProjection(code EPSGCode, str string) {
-	projStringLock.Lock()
-	projStrings[code] = str
-	projStringLock.Unlock()
+// GetProj4FromEPSG retrieves the proj4 string for a given EPSG code from epsg.io.
+// It validates if the proj4 string is supported by the library.
+func GetProj4FromEPSG(epsg int) (string, error) {
+	resp, err := http.Get(fmt.Sprintf("https://epsg.io/%d.proj4", epsg))
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("epsg %d not found", epsg)
+	}
+	proj4String, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	proj4Str := string(proj4String)
+	ps, err := support.NewProjString(proj4Str)
+	if err != nil {
+		return "", err
+	}
+	_, _, err = core.NewSystem(ps)
+	if err != nil {
+		return "", err
+	}
+	return proj4Str, nil
+}
+
+// isGeographicSystem checks if a proj4 string represents a geographic coordinate system
+func isGeographicSystem(proj4 string) bool {
+	ps, err := support.NewProjString(proj4)
+	if err != nil {
+		return false
+	}
+	proj, _ := ps.GetAsString("proj")
+	return proj == "longlat" || proj == "latlong" || proj == "latlon" || proj == "lonlat"
 }
 
 //---------------------------------------------------------------------------
 
 // conversion holds the objects needed to perform a conversion
 type conversion struct {
-	dest       EPSGCode
 	projString *support.ProjString
 	system     *core.System
 	operation  core.IOperation
 	converter  core.IConvertLPToXY
 }
 
-var (
-	// cacheLock ensure only one person is updating our cache of converters at a time
-	cacheLock   = sync.Mutex{}
-	conversions = map[EPSGCode]*conversion{}
-
-	projStringLock = sync.RWMutex{}
-	projStrings    = map[EPSGCode]string{
-		EPSG3395: "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84",                            // TODO: support +units=m +no_defs
-		EPSG3857: "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0", // TODO: support +units=m +nadgrids=@null +wktext +no_defs
-		EPSG4087: "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84",               // TODO: support +units=m +no_defs
-	}
-)
-
-// AvailableConversions  returns a list of conversion that the system knows about
-func AvailableConversions() (ret []EPSGCode) {
-	projStringLock.RLock()
-	defer projStringLock.RUnlock()
-	if len(projStrings) == 0 {
-		return nil
-	}
-	ret = make([]EPSGCode, 0, len(projStrings))
-	for k := range projStrings {
-		ret = append(ret, k)
-	}
-	return ret
-}
-
-// IsKnownConversionSRID returns if we know about the conversion
-func IsKnownConversionSRID(srid EPSGCode) bool {
-	projStringLock.RLock()
-	defer projStringLock.RUnlock()
-	_, ok := projStrings[srid]
-	return ok
-}
-
-// newConversion creates a conversion object for the destination systems. If
-// such a conversion already exists in the cache, use that.
-func newConversion(dest EPSGCode) (*conversion, error) {
-
-	projStringLock.RLock()
-	str, ok := projStrings[dest]
-	projStringLock.RUnlock()
-	if !ok {
-		return nil, fmt.Errorf("epsg code is not a supported projection")
-	}
-
-	conv, ok := conversions[dest]
-	if ok {
-		return conv, nil
-	}
-
-	// need to build it
-
-	ps, err := support.NewProjString(str)
+// newConversion creates a conversion object for the destination systems.
+func newConversion(proj4 string) (*conversion, error) {
+	ps, err := support.NewProjString(proj4)
 	if err != nil {
 		return nil, err
 	}
@@ -160,23 +141,18 @@ func newConversion(dest EPSGCode) (*conversion, error) {
 		return nil, fmt.Errorf("projection type is not supported")
 	}
 
-	conv = &conversion{
-		dest:       dest,
+	conv := &conversion{
 		projString: ps,
 		system:     sys,
 		operation:  opx,
 		converter:  opx.(core.IConvertLPToXY),
 	}
 
-	// cache it
-	conversions[dest] = conv
-
 	return conv, nil
 }
 
 // convert performs the projection on the given input points
 func (conv *conversion) convert(input []float64) ([]float64, error) {
-
 	if conv == nil || conv.converter == nil {
 		return nil, fmt.Errorf("conversion not initialized")
 	}
