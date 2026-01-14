@@ -11,9 +11,9 @@ type mode int
 
 const (
 	modeNPole mode = 0
-	modeSPole      = 1
-	modeEquit      = 2
-	modeObliq      = 3
+	modeSPole mode = 1
+	modeEquit mode = 2
+	modeObliq mode = 3
 )
 
 const tol7 = 1.e-7

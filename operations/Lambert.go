@@ -94,28 +94,28 @@ func (op *LCC) Inverse(xy *core.CoordXY) (*core.CoordLP, error) {
 	return &core.CoordLP{Phi: lat, Lam: lon}, nil
 }
 
-func (op *LCC) lccSetup(system *core.System) error {
-	phi0, ok0 := system.ProjString.GetAsFloat("lat_0")
+func (op *LCC) lccSetup(sys *core.System) error {
+	phi0, ok0 := sys.ProjString.GetAsFloat("lat_0")
 	if !ok0 {
 		phi0 = 0.0
 	}
-	phi1, ok1 := system.ProjString.GetAsFloat("lat_1")
+	phi1, ok1 := sys.ProjString.GetAsFloat("lat_1")
 	if !ok1 {
 		phi1 = 0.0
 	}
-	phi2, ok2 := system.ProjString.GetAsFloat("lat_2")
+	phi2, ok2 := sys.ProjString.GetAsFloat("lat_2")
 	if !ok2 {
 		phi2 = phi1
 	}
-	lambda0, ok3 := system.ProjString.GetAsFloat("lon_0")
+	lambda0, ok3 := sys.ProjString.GetAsFloat("lon_0")
 	if !ok3 {
 		lambda0 = 0.0
 	}
-	x0, ok4 := system.ProjString.GetAsFloat("x_0")
+	x0, ok4 := sys.ProjString.GetAsFloat("x_0")
 	if !ok4 {
 		x0 = 0.0
 	}
-	y0, ok5 := system.ProjString.GetAsFloat("y_0")
+	y0, ok5 := sys.ProjString.GetAsFloat("y_0")
 	if !ok5 {
 		y0 = 0.0
 	}
@@ -127,7 +127,7 @@ func (op *LCC) lccSetup(system *core.System) error {
 	op.x0 = x0
 	op.y0 = y0
 
-	PE := system.Ellipsoid
+	PE := sys.Ellipsoid
 
 	m1 := support.Msfn(math.Sin(op.phi1), math.Cos(op.phi1), PE.Es)
 	t1 := support.Tsfn(op.phi1, math.Sin(op.phi1), PE.E)

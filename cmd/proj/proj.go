@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/oahumap/proj"
@@ -86,7 +87,7 @@ func Main(inS io.Reader, outS io.Writer, args []string) error {
 		f := func(a, b float64) (float64, float64, error) {
 			input[0] = a
 			input[1] = b
-			output, err := proj.Convert(proj.EPSGCode(*epsgDest), input)
+			output, err := proj.Convert(strconv.Itoa(*epsgDest), input)
 			if err != nil {
 				return 0.0, 0.0, err
 			}

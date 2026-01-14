@@ -66,9 +66,7 @@ func (op *Eqc) spheroidalReverse(xy *core.CoordXY) (*core.CoordLP, error) { /* E
 }
 
 func (op *Eqc) eqcSetup(sys *core.System) error {
-	ps := op.System.ProjString
-
-	latts, _ := ps.GetAsFloat("lat_ts")
+	latts, _ := sys.ProjString.GetAsFloat("lat_ts")
 	if math.Cos(latts) <= 0 {
 		return merror.New(merror.LatTSLargerThan90)
 	}

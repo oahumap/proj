@@ -250,19 +250,15 @@ func (op *EtMerc) Inverse(xy *core.CoordXY) (*core.CoordLP, error) {
 }
 
 /* general initialization */
-func (op *EtMerc) setup(P *core.System) error {
+func (op *EtMerc) setup(sys *core.System) error {
 	var f, n, np, Z float64
 
-	Q := op
-
-	PE := P.Ellipsoid
-
-	if PE.Es <= 0 {
+	if sys.Ellipsoid.Es <= 0 {
 		return merror.New(merror.EllipsoidUseRequired)
 	}
 
 	/* flattening */
-	f = PE.Es / (1 + math.Sqrt(1.0-PE.Es)) /* Replaces: f = 1 - sqrt(1-P->es); */
+	f = sys.Ellipsoid.Es / (1 + math.Sqrt(1.0-sys.Ellipsoid.Es)) /* Replaces: f = 1 - sqrt(1-P->es); */
 
 	/* third flattening */
 	n = f / (2.0 - f)
@@ -273,69 +269,68 @@ func (op *EtMerc) setup(P *core.System) error {
 	/* cbg := Geodetic -> Gaussian, KW p186 - 187 (51) - (52) */
 	/* PROJ_ETMERC_ORDER = 6th degree : Engsager and Poder: ICC2007 */
 
-	Q.cgb[0] = n * (2 + n*(-2/3.0+n*(-2+n*(116/45.0+n*(26/45.0+
+	op.cgb[0] = n * (2 + n*(-2/3.0+n*(-2+n*(116/45.0+n*(26/45.0+
 		n*(-2854/675.0))))))
-	Q.cbg[0] = n * (-2 + n*(2/3.0+n*(4/3.0+n*(-82/45.0+n*(32/45.0+
+	op.cbg[0] = n * (-2 + n*(2/3.0+n*(4/3.0+n*(-82/45.0+n*(32/45.0+
 		n*(4642/4725.0))))))
 	np *= n
-	Q.cgb[1] = np * (7/3.0 + n*(-8/5.0+n*(-227/45.0+n*(2704/315.0+
+	op.cgb[1] = np * (7/3.0 + n*(-8/5.0+n*(-227/45.0+n*(2704/315.0+
 		n*(2323/945.0)))))
-	Q.cbg[1] = np * (5/3.0 + n*(-16/15.0+n*(-13/9.0+n*(904/315.0+
+	op.cbg[1] = np * (5/3.0 + n*(-16/15.0+n*(-13/9.0+n*(904/315.0+
 		n*(-1522/945.0)))))
 	np *= n
 	/* n^5 coeff corrected from 1262/105 -> -1262/105 */
-	Q.cgb[2] = np * (56/15.0 + n*(-136/35.0+n*(-1262/105.0+
+	op.cgb[2] = np * (56/15.0 + n*(-136/35.0+n*(-1262/105.0+
 		n*(73814/2835.0))))
-	Q.cbg[2] = np * (-26/15.0 + n*(34/21.0+n*(8/5.0+
+	op.cbg[2] = np * (-26/15.0 + n*(34/21.0+n*(8/5.0+
 		n*(-12686/2835.0))))
 	np *= n
 	/* n^5 coeff corrected from 322/35 -> 332/35 */
-	Q.cgb[3] = np * (4279/630.0 + n*(-332/35.0+n*(-399572/14175.0)))
-	Q.cbg[3] = np * (1237/630.0 + n*(-12/5.0+n*(-24832/14175.0)))
+	op.cgb[3] = np * (4279/630.0 + n*(-332/35.0+n*(-399572/14175.0)))
+	op.cbg[3] = np * (1237/630.0 + n*(-12/5.0+n*(-24832/14175.0)))
 	np *= n
-	Q.cgb[4] = np * (4174/315.0 + n*(-144838/6237.0))
-	Q.cbg[4] = np * (-734/315.0 + n*(109598/31185.0))
+	op.cgb[4] = np * (4174/315.0 + n*(-144838/6237.0))
+	op.cbg[4] = np * (-734/315.0 + n*(109598/31185.0))
 	np *= n
-	Q.cgb[5] = np * (601676 / 22275.0)
-	Q.cbg[5] = np * (444337 / 155925.0)
+	op.cgb[5] = np * (601676 / 22275.0)
+	op.cbg[5] = np * (444337 / 155925.0)
 
 	/* Constants of the projections */
 	/* Transverse Mercator (UTM, ITM, etc) */
 	np = n * n
 	/* Norm. mer. quad, K&W p.50 (96), p.19 (38b), p.5 (2) */
-	Q.Qn = P.K0 / (1 + n) * (1 + np*(1/4.0+np*(1/64.0+np/256.0)))
+	op.Qn = sys.K0 / (1 + n) * (1 + np*(1/4.0+np*(1/64.0+np/256.0)))
 	/* coef of trig series */
 	/* utg := ell. N, E -> sph. N, E,  KW p194 (65) */
 	/* gtu := sph. N, E -> ell. N, E,  KW p196 (69) */
-	Q.utg[0] = n * (-0.5 + n*(2/3.0+n*(-37/96.0+n*(1/360.0+
+	op.utg[0] = n * (-0.5 + n*(2/3.0+n*(-37/96.0+n*(1/360.0+
 		n*(81/512.0+n*(-96199/604800.0))))))
-	Q.gtu[0] = n * (0.5 + n*(-2/3.0+n*(5/16.0+n*(41/180.0+
+	op.gtu[0] = n * (0.5 + n*(-2/3.0+n*(5/16.0+n*(41/180.0+
 		n*(-127/288.0+n*(7891/37800.0))))))
-	Q.utg[1] = np * (-1/48.0 + n*(-1/15.0+n*(437/1440.0+n*(-46/105.0+
+	op.utg[1] = np * (-1/48.0 + n*(-1/15.0+n*(437/1440.0+n*(-46/105.0+
 		n*(1118711/3870720.0)))))
-	Q.gtu[1] = np * (13/48.0 + n*(-3/5.0+n*(557/1440.0+n*(281/630.0+
+	op.gtu[1] = np * (13/48.0 + n*(-3/5.0+n*(557/1440.0+n*(281/630.0+
 		n*(-1983433/1935360.0)))))
 	np *= n
-	Q.utg[2] = np * (-17/480.0 + n*(37/840.0+n*(209/4480.0+
+	op.utg[2] = np * (-17/480.0 + n*(37/840.0+n*(209/4480.0+
 		n*(-5569/90720.0))))
-	Q.gtu[2] = np * (61/240.0 + n*(-103/140.0+n*(15061/26880.0+
+	op.gtu[2] = np * (61/240.0 + n*(-103/140.0+n*(15061/26880.0+
 		n*(167603/181440.0))))
 	np *= n
-	Q.utg[3] = np * (-4397/161280.0 + n*(11/504.0+n*(830251/7257600.0)))
-	Q.gtu[3] = np * (49561/161280.0 + n*(-179/168.0+n*(6601661/7257600.0)))
+	op.utg[3] = np * (-4397/161280.0 + n*(11/504.0+n*(830251/7257600.0)))
+	op.gtu[3] = np * (49561/161280.0 + n*(-179/168.0+n*(6601661/7257600.0)))
 	np *= n
-	Q.utg[4] = np * (-4583/161280.0 + n*(108847/3991680.0))
-	Q.gtu[4] = np * (34729/80640.0 + n*(-3418889/1995840.0))
+	op.utg[4] = np * (-4583/161280.0 + n*(108847/3991680.0))
+	op.gtu[4] = np * (34729/80640.0 + n*(-3418889/1995840.0))
 	np *= n
-	Q.utg[5] = np * (-20648693 / 638668800.0)
-	Q.gtu[5] = np * (212378941 / 319334400.0)
+	op.utg[5] = np * (-20648693 / 638668800.0)
+	op.gtu[5] = np * (212378941 / 319334400.0)
 
 	/* Gaussian latitude value of the origin latitude */
-	Z = gatg(Q.cbg[:], etmercOrder, P.Phi0)
-
+	Z = gatg(op.cbg[:], etmercOrder, sys.Phi0)
 	/* Origin northing minus true northing at the origin latitude */
 	/* i.e. true northing = N - P->Zb                         */
-	Q.Zb = -Q.Qn * (Z + clens(Q.gtu[:], etmercOrder, 2*Z))
+	op.Zb = -op.Qn * (Z + clens(op.gtu[:], etmercOrder, 2*Z))
 
 	return nil
 }

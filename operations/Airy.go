@@ -115,12 +115,10 @@ func (*Airy) Inverse(*core.CoordXY) (*core.CoordLP, error) {
 func (op *Airy) setup(sys *core.System) error {
 	var beta float64
 
-	Q := op
-	P := op.System
-	PE := op.System.Ellipsoid
+	PE := sys.Ellipsoid
 
-	Q.nocut = P.ProjString.ContainsKey("no_cut")
-	latb, ok := P.ProjString.GetAsFloat("lat_b")
+	op.nocut = sys.ProjString.ContainsKey("no_cut")
+	latb, ok := sys.ProjString.GetAsFloat("lat_b")
 	if !ok {
 		latb = 0.0
 	}
@@ -128,27 +126,27 @@ func (op *Airy) setup(sys *core.System) error {
 
 	beta = 0.5 * (support.PiOverTwo - latb)
 	if math.Abs(beta) < eps10 {
-		Q.Cb = -0.5
+		op.Cb = -0.5
 	} else {
-		Q.Cb = 1. / math.Tan(beta)
-		Q.Cb *= Q.Cb * math.Log(math.Cos(beta))
+		op.Cb = 1. / math.Tan(beta)
+		op.Cb *= op.Cb * math.Log(math.Cos(beta))
 	}
 
-	if math.Abs(math.Abs(P.Phi0)-support.PiOverTwo) < eps10 {
-		if P.Phi0 < 0. {
-			Q.phalfpi = -support.PiOverTwo
-			Q.mode = modeSPole
+	if math.Abs(math.Abs(sys.Phi0)-support.PiOverTwo) < eps10 {
+		if sys.Phi0 < 0. {
+			op.phalfpi = -support.PiOverTwo
+			op.mode = modeSPole
 		} else {
-			Q.phalfpi = support.PiOverTwo
-			Q.mode = modeNPole
+			op.phalfpi = support.PiOverTwo
+			op.mode = modeNPole
 		}
 	} else {
-		if math.Abs(P.Phi0) < eps10 {
-			Q.mode = modeEquit
+		if math.Abs(sys.Phi0) < eps10 {
+			op.mode = modeEquit
 		} else {
-			Q.mode = modeObliq
-			Q.sinph0 = math.Sin(P.Phi0)
-			Q.cosph0 = math.Cos(P.Phi0)
+			op.mode = modeObliq
+			op.sinph0 = math.Sin(sys.Phi0)
+			op.cosph0 = math.Cos(sys.Phi0)
 		}
 	}
 

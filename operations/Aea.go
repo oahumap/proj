@@ -113,51 +113,47 @@ func (op *Aea) setup(sys *core.System) error {
 	var cosphi, sinphi float64
 	var secant bool
 
-	Q := op
-	P := op.System
-	PE := P.Ellipsoid
-
-	if math.Abs(Q.phi1+Q.phi2) < eps10 {
+	if math.Abs(op.phi1+op.phi2) < eps10 {
 		return merror.New(merror.ConicLatEqual)
 	}
-	sinphi = math.Sin(Q.phi1)
-	Q.n = sinphi
-	cosphi = math.Cos(Q.phi1)
-	secant = math.Abs(Q.phi1-Q.phi2) >= eps10
-	Q.ellips = (P.Ellipsoid.Es > 0.0)
-	if Q.ellips {
+	sinphi = math.Sin(op.phi1)
+	op.n = sinphi
+	cosphi = math.Cos(op.phi1)
+	secant = math.Abs(op.phi1-op.phi2) >= eps10
+	op.ellips = (sys.Ellipsoid.Es > 0.0)
+	if op.ellips {
 		var ml1, m1 float64
 
-		Q.en = support.Enfn(PE.Es)
-		m1 = support.Msfn(sinphi, cosphi, PE.Es)
-		ml1 = support.Qsfn(sinphi, PE.E, PE.OneEs)
+		op.en = support.Enfn(sys.Ellipsoid.Es)
+		m1 = support.Msfn(sinphi, cosphi, sys.Ellipsoid.Es)
+		ml1 = support.Qsfn(sinphi, sys.Ellipsoid.E, sys.Ellipsoid.OneEs)
 		if secant { // secant cone
 			var ml2, m2 float64
 
-			sinphi = math.Sin(Q.phi2)
-			cosphi = math.Cos(Q.phi2)
-			m2 = support.Msfn(sinphi, cosphi, PE.Es)
-			ml2 = support.Qsfn(sinphi, PE.E, PE.OneEs)
+			sinphi = math.Sin(op.phi2)
+			cosphi = math.Cos(op.phi2)
+			m2 = support.Msfn(sinphi, cosphi, sys.Ellipsoid.Es)
+			ml2 = support.Qsfn(sinphi, sys.Ellipsoid.E, sys.Ellipsoid.OneEs)
 			if ml2 == ml1 {
 				return merror.New(merror.AeaSetupFailed)
 			}
 
-			Q.n = (m1*m1 - m2*m2) / (ml2 - ml1)
+			op.n = (m1*m1 - m2*m2) / (ml2 - ml1)
 		}
-		Q.ec = 1. - .5*PE.OneEs*math.Log((1.-PE.E)/
-			(1.+PE.E))/PE.E
-		Q.c = m1*m1 + Q.n*ml1
-		Q.dd = 1. / Q.n
-		Q.rho0 = Q.dd * math.Sqrt(Q.c-Q.n*support.Qsfn(math.Sin(P.Phi0),
-			PE.E, PE.OneEs))
+		op.ec = 1. - .5*sys.Ellipsoid.OneEs*math.Log((1.-sys.Ellipsoid.E)/
+			(1.+sys.Ellipsoid.E))/sys.Ellipsoid.E
+		op.c = m1*m1 + op.n*ml1
+		op.dd = 1. / op.n
+		op.rho0 = op.dd * math.Sqrt(op.c-op.n*support.Qsfn(math.Sin(sys.Phi0),
+			sys.Ellipsoid.E, sys.Ellipsoid.OneEs))
 	} else {
 		if secant {
-			Q.n = .5 * (Q.n + math.Sin(Q.phi2))
+			op.n = .5 * (op.n + math.Sin(op.phi2))
 		}
-		Q.n2 = Q.n + Q.n
-		Q.c = cosphi*cosphi + Q.n2*sinphi
-		Q.dd = 1. / Q.n
-		Q.rho0 = Q.dd * math.Sqrt(Q.c-Q.n2*math.Sin(P.Phi0))
+		op.n2 = op.n + op.n
+		op.c = cosphi*cosphi + op.n2*sinphi
+		op.dd = 1. / op.n
+		op.rho0 = op.dd * math.Sqrt(op.c-op.n2*math.Sin(sys.Phi0))
 	}
 
 	return nil
@@ -242,11 +238,11 @@ func (op *Aea) Inverse(xy *core.CoordXY) (*core.CoordLP, error) {
 
 func (op *Aea) aeaSetup(sys *core.System) error {
 
-	lat1, ok := op.System.ProjString.GetAsFloat("lat_1")
+	lat1, ok := sys.ProjString.GetAsFloat("lat_1")
 	if !ok {
 		lat1 = 0.0
 	}
-	lat2, ok := op.System.ProjString.GetAsFloat("lat_2")
+	lat2, ok := sys.ProjString.GetAsFloat("lat_2")
 	if !ok {
 		lat2 = 0.0
 	}
@@ -259,13 +255,13 @@ func (op *Aea) aeaSetup(sys *core.System) error {
 
 func (op *Aea) leacSetup(sys *core.System) error {
 
-	lat1, ok := op.System.ProjString.GetAsFloat("lat_1")
+	lat1, ok := sys.ProjString.GetAsFloat("lat_1")
 	if !ok {
 		lat1 = 0.0
 	}
 
 	south := -support.PiOverTwo
-	_, ok = op.System.ProjString.GetAsInt("south")
+	_, ok = sys.ProjString.GetAsInt("south")
 	if !ok {
 		south = support.PiOverTwo
 	}
@@ -273,5 +269,5 @@ func (op *Aea) leacSetup(sys *core.System) error {
 	op.phi2 = support.DDToR(lat1)
 	op.phi1 = south
 
-	return op.setup(op.System)
+	return op.setup(sys)
 }
