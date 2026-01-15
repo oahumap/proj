@@ -78,31 +78,60 @@ func Inverse(proj4 string, input []float64) ([]float64, error) {
 	return conv.inverse(input)
 }
 
+type Projection struct {
+	Code    string
+	Proj4   string
+	OGCWKT  string
+	ESRIWKT string
+}
+
 // GetProj4FromEPSG retrieves the proj4 string for a given EPSG code from epsg.io.
 // It validates if the proj4 string is supported by the library.
-func GetProj4FromEPSG(epsg int) (string, error) {
-	resp, err := http.Get(fmt.Sprintf("https://epsg.io/%d.proj4", epsg))
+func GetProjFromEPSG(epsg string) (*Projection, error) {
+	proj4Str, err := getFromEPSGAPI(epsg, "proj4")
+	if err != nil {
+		return nil, err
+	}
+	ps, err := support.NewProjString(proj4Str)
+	if err != nil {
+		return nil, err
+	}
+
+	ogcWKT, err := getFromEPSGAPI(epsg, "prettywkt")
+	if err != nil {
+		return nil, err
+	}
+	esriWKT, err := getFromEPSGAPI(epsg, "esriwkt")
+	if err != nil {
+		return nil, err
+	}
+
+	_, _, err = core.NewSystem(ps)
+	if err != nil {
+		return nil, err
+	}
+	return &Projection{
+		Code:    epsg,
+		Proj4:   proj4Str,
+		OGCWKT:  ogcWKT,
+		ESRIWKT: esriWKT,
+	}, nil
+}
+
+func getFromEPSGAPI(epsg, what string) (string, error) {
+	resp, err := http.Get(fmt.Sprintf("https://epsg.io/%s.%s", epsg, what))
 	if err != nil {
 		return "", err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		return "", fmt.Errorf("epsg %d not found", epsg)
+		return "", fmt.Errorf("epsg %s not found", epsg)
 	}
-	proj4String, err := io.ReadAll(resp.Body)
+	str, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}
-	proj4Str := string(proj4String)
-	ps, err := support.NewProjString(proj4Str)
-	if err != nil {
-		return "", err
-	}
-	_, _, err = core.NewSystem(ps)
-	if err != nil {
-		return "", err
-	}
-	return proj4Str, nil
+	return string(str), nil
 }
 
 // isGeographicSystem checks if a proj4 string represents a geographic coordinate system
