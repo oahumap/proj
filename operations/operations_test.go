@@ -133,6 +133,16 @@ var testdata = []data{
 			{-200, 100, -0.001796359, 0.000904232},
 			{-200, -100, -0.001796358, -0.000904233},
 		},
+	}, {
+		// builtins.gie:5124
+		proj:  "+proj=wintri   +a=6400000    +lat_1=0 +lat_2=2",
+		delta: 0.1 * 0.001,
+		fwd: [][]float64{
+			{2, 1, 223390.801533485, 111703.907505745},
+			{2, -1, 223390.801533485, -111703.907505745},
+			{-2, 1, -223390.801533485, 111703.907505745},
+			{-2, -1, -223390.801533485, -111703.907505745},
+		},
 	},
 }
 
@@ -221,6 +231,32 @@ func BenchmarkConvertAiry(b *testing.B) {
 
 func BenchmarkConvertEqc(b *testing.B) {
 	ps, _ := support.NewProjString("+proj=eqc +a=6400000 +lat_1=0.5 +lat_2=2")
+	_, opx, _ := core.NewSystem(ps)
+	op := opx.(core.IConvertLPToXY)
+	input := &core.CoordLP{Lam: support.DDToR(12.0), Phi: support.DDToR(55.0)}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = op.Forward(input)
+	}
+}
+
+func BenchmarkConvertLcc(b *testing.B) {
+	ps, _ := support.NewProjString("+proj=lcc   +ellps=GRS80  +lat_1=0.5 +lat_2=2")
+	_, opx, _ := core.NewSystem(ps)
+	op := opx.(core.IConvertLPToXY)
+	input := &core.CoordLP{Lam: support.DDToR(12.0), Phi: support.DDToR(55.0)}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = op.Forward(input)
+	}
+}
+
+func BenchmarkConvertWintri(b *testing.B) {
+	ps, _ := support.NewProjString("+proj=wintri   +a=6400000    +lat_1=0 +lat_2=2")
 	_, opx, _ := core.NewSystem(ps)
 	op := opx.(core.IConvertLPToXY)
 	input := &core.CoordLP{Lam: support.DDToR(12.0), Phi: support.DDToR(55.0)}
