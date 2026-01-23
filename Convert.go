@@ -8,6 +8,7 @@
 package proj
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -80,14 +81,15 @@ func Inverse(proj4 string, input []float64) ([]float64, error) {
 
 type Projection struct {
 	Code    string
+	Name    string
 	Proj4   string
 	OGCWKT  string
 	ESRIWKT string
 }
 
-// GetProj4FromEPSG retrieves the proj4 string for a given EPSG code from epsg.io.
-// It validates if the proj4 string is supported by the library.
-func GetProjFromEPSG(epsg string) (*Projection, error) {
+// GetInfoFromEPSG retrieves the info for a given EPSG code from epsg.io.
+// It validates also if the proj4 string is supported by the library.
+func GetInfoFromEPSG(epsg string) (*Projection, error) {
 	proj4Str, err := getFromEPSGAPI(epsg, "proj4")
 	if err != nil {
 		return nil, err
@@ -105,13 +107,34 @@ func GetProjFromEPSG(epsg string) (*Projection, error) {
 	if err != nil {
 		return nil, err
 	}
+	jsonStr, err := getFromEPSGAPI(epsg, "json")
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse the JSON string into a map
+	var jsonData map[string]any
+	err = json.Unmarshal([]byte(jsonStr), &jsonData)
+	if err != nil {
+		return nil, err
+	}
 
 	_, _, err = core.NewSystem(ps)
 	if err != nil {
 		return nil, err
 	}
+
+	// Extract name from JSON data
+	name := ""
+	if nameValue, ok := jsonData["name"]; ok {
+		if nameStr, ok := nameValue.(string); ok {
+			name = nameStr
+		}
+	}
+
 	return &Projection{
 		Code:    epsg,
+		Name:    name,
 		Proj4:   proj4Str,
 		OGCWKT:  ogcWKT,
 		ESRIWKT: esriWKT,

@@ -31,9 +31,9 @@ type testcase struct {
 }
 
 var projStrings = map[string]string{
-	"3395": "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84",                            // TODO: support +units=m +no_defs
-	"3857": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0", // TODO: support +units=m +nadgrids=@null +wktext +no_defs
-	"4087": "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84",               // TODO: support +units=m +no_defs
+	"3395": "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +datum=WGS84",
+	"3857": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0",
+	"4087": "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84",
 }
 
 var testcases = []testcase{
@@ -196,8 +196,7 @@ func ExampleConvert() {
 // }
 
 // func TestConvertProj4String(t *testing.T) {
-// 	output, err := proj.ConvertProj4String(2154, 2.352222, 48.856614)
+// 	out, err := proj.GetInfoFromEPSG("2154")
 // 	assert.NoError(t, err)
-// 	assert.InDelta(t, 102970.56, output.X, 0.01)
-// 	assert.InDelta(t, 6864593.23, output.Y, 0.01)
+// 	fmt.Printf("Proj4: %s\n", out.Proj4)
 // }
